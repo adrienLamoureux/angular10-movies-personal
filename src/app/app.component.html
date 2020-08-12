@@ -1,0 +1,6 @@
+<mat-toolbar fxLayout="row" fxLayoutAlign="space-between center">
+  <a routerLink="/movies" routerLinkActive="active"><mat-icon>home</mat-icon></a>
+  <a *ngIf="!isLoggedIn()" routerLink="/login" routerLinkActive="active"><mat-icon>login</mat-icon></a>
+  <a *ngIf="isLoggedIn()" routerLink="/logout" routerLinkActive="active"><mat-icon>logout</mat-icon></a>
+</mat-toolbar>
+<router-outlet></router-outlet>
