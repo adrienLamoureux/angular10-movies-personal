@@ -1,44 +1,47 @@
-import { Injectable } from '@angular/core';
-import * as moment from "moment";
-import { HttpClient } from '@angular/common/http';
+    import { Injectable } from '@angular/core';
+    import * as moment from "moment";
+    import { HttpClient, HttpHeaders } from '@angular/common/http';
+    import { Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthService {
+    @Injectable({
+    providedIn: 'root'
+    })
+    export class AuthService {
 
-  constructor(private http: HttpClient) {
+        private authHeader;
 
-  }
+        constructor(private http: HttpClient, private router: Router) {
+            this.authHeader = new HttpHeaders({ 
+                'Access-Control-Allow-Origin':'*'
+            })
+        }
 
-  login(email:string, password:string ) {
-      return this.http.post<any>('/api/login', {email, password})
-          .subscribe(res => this.setSession)
-  }
-        
-  private setSession(authResult) {
-      const expiresAt = moment().add(authResult.expiresIn,'second');
+        login(email:string, password:string ) {
+            return this.http.post<any>('/api/login', {username: email, password: password}, {
+                headers: this.authHeader,
+                withCredentials: true,
+            }).subscribe((response: Response) => { this.setSession(response); this.router.navigate(['/movies']);}, (err) => { console.error(err) } )
+        }
+            
+        private setSession(authResult) {
+            localStorage.setItem('id_token', authResult.token);
+            localStorage.setItem("expires_at", JSON.stringify(authResult.expireTm) );
+        }          
 
-      localStorage.setItem('id_token', authResult.idToken);
-      localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()) );
-  }          
+        logout() {
+            localStorage.removeItem("id_token");
+            localStorage.removeItem("expires_at");
+        }
 
-  logout() {
-      localStorage.removeItem("id_token");
-      localStorage.removeItem("expires_at");
-  }
+        public isLoggedIn() {
+            return moment().unix() < this.getExpiration();
+        }
 
-  public isLoggedIn() {
-      return moment().isBefore(this.getExpiration());
-  }
+        isLoggedOut() {
+            return !this.isLoggedIn();
+        }
 
-  isLoggedOut() {
-      return !this.isLoggedIn();
-  }
-
-  getExpiration() {
-      const expiration = localStorage.getItem("expires_at");
-      const expiresAt = JSON.parse(expiration);
-      return moment(expiresAt);
-  }    
-}
+        getExpiration() {
+            return JSON.parse(localStorage.getItem("expires_at"));
+        }    
+    }
