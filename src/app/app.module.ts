@@ -11,6 +11,7 @@ import { LoginComponent } from './login/login.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HttpClientModule } from '@angular/common/http';
 import { ThemoviedbApiService } from "./services/themoviedb-api.service";
+import { MovieService } from "./services/movie.service";
 import { FlexLayoutModule } from "@angular/flex-layout";
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { LogoutComponent } from './logout/logout.component';
@@ -34,7 +35,7 @@ import { LogoutComponent } from './logout/logout.component';
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [ThemoviedbApiService],
+  providers: [ThemoviedbApiService, MovieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

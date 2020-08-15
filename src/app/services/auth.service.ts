@@ -17,7 +17,7 @@
         }
 
         login(email:string, password:string ) {
-            return this.http.post<any>('/api/login', {username: email, password: password}, {
+            return this.http.post<any>('/api/login', {email: email, password: password}, {
                 headers: this.authHeader,
                 withCredentials: true,
             }).subscribe((response: Response) => { this.setSession(response); this.router.navigate(['/movies']);}, (err) => { console.error(err) } )
